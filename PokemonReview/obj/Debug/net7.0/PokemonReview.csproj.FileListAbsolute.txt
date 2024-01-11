@@ -74,3 +74,6 @@ C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\refint\P
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.pdb
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.genruntimeconfig.cache
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\ref\PokemonReview.dll
+C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.sourcelink.json
+C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
