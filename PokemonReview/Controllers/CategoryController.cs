@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonReview.Dto;
 using PokemonReview.Models;
-using PokemonReview.Repository;
+using PokemonReview.Interface;
 
 namespace PokemonReview.Controllers
 {
@@ -10,10 +10,10 @@ namespace PokemonReview.Controllers
     [ApiController]
     public class CategoryController : Controller
     {
-        private readonly CategoryRepository _categoryrepository;
+        private readonly ICategoryRepository _categoryrepository;
         private readonly IMapper _mapper;
 
-        public CategoryController(CategoryRepository categoryRepository,IMapper mapper)
+        public CategoryController(ICategoryRepository categoryRepository,IMapper mapper)
         {
             _categoryrepository = categoryRepository;
             _mapper = mapper;
@@ -39,6 +39,7 @@ namespace PokemonReview.Controllers
             }
 
         }
+
         [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type=typeof(Category))]
         [ProducesResponseType(400)]
