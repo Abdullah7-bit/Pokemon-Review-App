@@ -78,7 +78,7 @@ namespace PokemonReview
                             }
                         }
                     },
-                                    new PokemonOwner()
+                    new PokemonOwner()
                     {
                         Pokemon = new Pokemon()
                         {
