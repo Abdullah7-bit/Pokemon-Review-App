@@ -68,10 +68,10 @@ namespace PokemonReview.Controllers
         }
 
 
-        [HttpGet("pokemon/{pokeId}")]
+        [HttpGet("pokemon/{reviewId}")]
         [ProducesResponseType(200, Type = typeof(Review))]
         [ProducesResponseType(400)]
-        public IActionResult GetPokemonByOwner(int reviewId)
+        public IActionResult GetReviewsOfAPokemon(int reviewId)
         {
             try
             {
