@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReview.Dto;
 using PokemonReview.Models;
 using PokemonReview.Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace PokemonReview.Controllers
 {
@@ -86,6 +87,53 @@ namespace PokemonReview.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while Executing Get Pokemon by Category Id API, Details : {ex}" });
             }
+            
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCategory([FromBody] CategoryDto createCategory)
+        {
+            try
+            {
+                if (createCategory == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var checking_category = _categoryrepository.GetCategories()
+                        .Where(cc => cc.Name.Trim().ToUpper() == createCategory.Name.TrimEnd().ToUpper())
+                        .FirstOrDefault();
+                    if (checking_category != null)
+                    {
+                        ModelState.AddModelError("", "Category already exists.");
+                        return StatusCode(422, ModelState);
+                    }
+                    else if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var categoryMap = _mapper.Map<Category>(createCategory);
+                        if (!_categoryrepository.CreateCategory(categoryMap))
+                        {
+                            ModelState.AddModelError("", "Something went wrong while saving!!");
+                            return StatusCode(500, ModelState);
+                        }
+                    }
+                    return Ok("Successfully Created!!");
+                    
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Category, Details:  {ex}" });
+            }           
             
         }
     }

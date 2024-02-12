@@ -19,6 +19,20 @@ namespace PokemonReview.Repository
             return _context.Categories.Any(c => c.Id == id);
         }
 
+        public bool CreateCategory(Category category)
+        {
+            /* Some learning Stuff about EF Core.
+             * Change Tracker
+             * Handles => adding, updating, modifying
+             * Connected vs Disconnected (Related to State)
+             * EntityState.Added
+             */
+
+            _context.Add(category);
+            return Save();
+
+        }
+
         public ICollection<Category> GetCategories()
         {
             return _context.Categories.ToList();
@@ -32,6 +46,12 @@ namespace PokemonReview.Repository
         public ICollection<Pokemon> GetPokemonbyCategory(int categoryId)
         {
             return _context.PokemonCategories.Where(pc => pc.CategoryId == categoryId).Select(c => c.Pokemon).ToList();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false ;
         }
     }
 }
