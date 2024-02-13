@@ -5,6 +5,8 @@ C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\PokemonR
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\PokemonReview.runtimeconfig.json
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\PokemonReview.dll
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\PokemonReview.pdb
+C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\Azure.Core.dll
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\Azure.Identity.dll
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\Humanizer.dll
@@ -60,6 +62,7 @@ C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonR
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.csproj.CoreCompileInputs.cache
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.sourcelink.json
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\staticwebassets.build.json
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\staticwebassets.development.json
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\staticwebassets\msbuild.PokemonReview.Microsoft.AspNetCore.StaticWebAssets.props
@@ -74,6 +77,3 @@ C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\refint\P
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.pdb
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.genruntimeconfig.cache
 C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\ref\PokemonReview.dll
-C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\obj\Debug\net7.0\PokemonReview.sourcelink.json
-C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\AutoMapper.dll
-C:\Users\MYSQ\source\repos\PokemonReview\PokemonReview\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

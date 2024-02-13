@@ -98,8 +98,9 @@ namespace PokemonReview.Controllers
         {
             try
             {
-                if (createCategory == null)
+                if (createCategory == null || string.IsNullOrWhiteSpace(createCategory.Name))
                 {
+                    ModelState.AddModelError("", "Category Name cannot be empty!!");
                     return BadRequest(ModelState);
                 }
                 else

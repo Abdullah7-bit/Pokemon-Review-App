@@ -17,6 +17,11 @@ namespace PokemonReview.Repository
             _mapper = mapper;
         }
 
+        public bool CreateReview(Review review)
+        {
+            _dataContext.AddAsync(review);
+            return Save();
+        }
 
         public Review GetReview(int reviewId)
         {
@@ -36,6 +41,12 @@ namespace PokemonReview.Repository
         public bool ReviewExist(int reviewId)
         {
             return _dataContext.Reviews.Any(r => r.Id == reviewId);
+        }
+
+        public bool Save()
+        {
+            var saved = _dataContext.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

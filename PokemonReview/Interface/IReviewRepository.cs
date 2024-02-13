@@ -11,5 +11,9 @@ namespace PokemonReview.Interface
         ICollection<Review> GetReviewsOfAPokemon(int pokeId);
 
         bool ReviewExist(int reviewId);
+
+        bool CreateReview(Review review);
+
+        bool Save();
     }
 }

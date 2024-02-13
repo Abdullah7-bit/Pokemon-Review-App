@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReview.Dto;
 using PokemonReview.Interface;
 using PokemonReview.Models;
+using PokemonReview.Repository;
 
 
 namespace PokemonReview.Controllers
@@ -88,9 +89,52 @@ namespace PokemonReview.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"GetPokemon Rating by ID is ran into an Error. Details :  {ex}" });
             }
-            
-
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreatePokemon([FromQuery] int ownerId, [FromQuery] int categoryId, [FromBody] PokemonDto createPokemon)
+        {
+            try
+            {
+                if (createPokemon == null || string.IsNullOrWhiteSpace(createPokemon.Name))
+                {
+                    ModelState.AddModelError("", "Category Name cannot be empty!!");
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var checking_pokemon = _pokemonrepository.GetPokemons()
+                        .Where(cc => cc.Name.Trim().ToUpper() == createPokemon.Name.TrimEnd().ToUpper())
+                        .FirstOrDefault();
+                    if (checking_pokemon != null)
+                    {
+                        ModelState.AddModelError("", "Pokemon already exists.");
+                        return StatusCode(422, ModelState);
+                    }
+                    else if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var pokemonMap = _mapper.Map<Pokemon>(createPokemon);
+                        if (!_pokemonrepository.CreatePokemon(ownerId, categoryId, pokemonMap))
+                        {
+                            ModelState.AddModelError("", "Something went wrong while saving!!");
+                            return StatusCode(500, ModelState);
+                        }
+                    }
+                    return Ok("Successfully Created!!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Category, Details:  {ex}" });
+            }
+        }
+
 
     }
 }

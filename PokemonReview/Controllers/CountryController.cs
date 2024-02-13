@@ -92,9 +92,55 @@ namespace PokemonReview.Controllers
             catch(Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"GetCountry by ownerID is ran into an Error. Details :  {ex}" });
+            }           
+            
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCountry([FromBody] CountryDto createCountry)
+        {
+            try
+            {
+                if (createCountry == null || string.IsNullOrWhiteSpace(createCountry.Name))
+                {
+                    ModelState.AddModelError("", "Country Name cannot be empty!! ");
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var checking_country = _countryRepository.GetCountries()
+                        .Where(cc => cc.Name.Trim().ToUpper() == createCountry.Name.TrimEnd().ToUpper())
+                        .FirstOrDefault();
+                    if (checking_country != null)
+                    {
+                        ModelState.AddModelError("", "Category already exists.");
+                        return StatusCode(422, ModelState);
+                    }
+                    else if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var countryMap = _mapper.Map<Country>(createCountry);
+                        if (!_countryRepository.CreateCountry(countryMap))
+                        {
+                            ModelState.AddModelError("", "Something went wrong while saving!!");
+                            return StatusCode(500, ModelState);
+                        }
+                    }
+                    return Ok("Successfully Created!!");
+
+                }
+
             }
-            
-            
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Country, Details:  {ex}" });
+            }
+
         }
 
     }

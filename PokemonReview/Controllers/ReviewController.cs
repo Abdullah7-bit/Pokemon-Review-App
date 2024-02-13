@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReview.Dto;
 using PokemonReview.Interface;
 using PokemonReview.Models;
+using PokemonReview.Repository;
 
 namespace PokemonReview.Controllers
 {
@@ -13,10 +14,14 @@ namespace PokemonReview.Controllers
     {
 
         private readonly IReviewRepository _reviewRepository;
+        private readonly IReviewerRepository _reviewerRepository;
+        private readonly IPokemonRepository _pokemonRepository;
         private readonly IMapper _mapper;
-        public ReviewController(IReviewRepository reviewRepository, IMapper mapper)
+        public ReviewController(IReviewRepository reviewRepository, IReviewerRepository reviewerRepository, IPokemonRepository pokemonRepository, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
+            _reviewerRepository = reviewerRepository;
+            _pokemonRepository = pokemonRepository;
             _mapper = mapper;
         }
 
@@ -96,5 +101,56 @@ namespace PokemonReview.Controllers
             }
 
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateReview([FromQuery] int reviewerId, [FromQuery] int pokeId,[FromBody] ReviewDto createReview)
+        {
+            try
+            {
+                if (createReview == null || string.IsNullOrWhiteSpace(createReview.Title))
+                {
+                    ModelState.AddModelError("", "Category Name cannot be empty!!");
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var checking_review = _reviewRepository.GetReviews()
+                        .Where(r => r.Title.Trim().ToUpper() == createReview.Title.TrimEnd().ToUpper())
+                        .FirstOrDefault();
+                    if (checking_review != null)
+                    {
+                        ModelState.AddModelError("", "Review already exists.");
+                        return StatusCode(422, ModelState);
+                    }
+                    else if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var reviewMap = _mapper.Map<Review>(createReview);
+
+                        reviewMap.Pokemon = _pokemonRepository.GetPokemon(pokeId);
+                        reviewMap.Reviewer = _reviewerRepository.GetReviewer(reviewerId);
+
+                        if (!_reviewRepository.CreateReview(reviewMap))
+                        {
+                            ModelState.AddModelError("", "Something went wrong while saving!!");
+                            return StatusCode(500, ModelState);
+                        }
+                    }
+                    return Ok("Successfully Created!!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Category, Details:  {ex}" });
+            }
+
+        }
+
     }
 }

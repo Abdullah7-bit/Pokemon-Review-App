@@ -13,10 +13,12 @@ namespace PokemonReview.Controllers
     public class OwnerController : ControllerBase
     {
         private readonly IOwnerRepository _ownerRepository;
+        private readonly ICountryRepository _countryRepository;
         private readonly IMapper _mapper;
-        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper)
+        public OwnerController(IOwnerRepository ownerRepository, ICountryRepository countryRepository ,IMapper mapper)
         {
             _ownerRepository = ownerRepository;
+            _countryRepository = countryRepository;
             _mapper = mapper;
         }
 
@@ -27,7 +29,7 @@ namespace PokemonReview.Controllers
         {
             try
             {
-                var owner = _mapper.Map<List<PokemonDto>>(_ownerRepository.GetOwners());
+                var owner = _mapper.Map<List<OwnerDto>>(_ownerRepository.GetOwners());
 
                 if (!ModelState.IsValid)
                 {
@@ -97,7 +99,61 @@ namespace PokemonReview.Controllers
 
         }
 
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateOwner([FromQuery] int countryId,[FromBody] OwnerDto createOwner)
+        {
+            try
+            {
+                /*
+                 * This API does not validating the following inputs with DB:
+                 * firstName
+                 * Gym
+                 * 
+                 * Q: How we are going to exclude the Foreign Key From Validating?
+                 * 
+                 */
+                if (createOwner == null || string.IsNullOrWhiteSpace(createOwner.LastName))
+                {
+                    ModelState.AddModelError("", "Owner Name cannot be empty!!");
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var checking_owner = _ownerRepository.GetOwners()
+                        .Where(cc => cc.LastName.Trim().ToUpper() == createOwner.LastName.TrimEnd().ToUpper())
+                        .FirstOrDefault();
+                    if (checking_owner != null)
+                    {
+                        ModelState.AddModelError("", "Owner already exists.");
+                        return StatusCode(422, ModelState);
+                    }
+                    else if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var ownerMap = _mapper.Map<Owner>(createOwner);
+                        ownerMap.Country = _countryRepository.GetCountry(countryId);
+                        if (!_ownerRepository.CreateOwner(ownerMap))
+                        {
+                            ModelState.AddModelError("", "Something went wrong while saving!!");
+                            return StatusCode(500, ModelState);
+                        }
+                    }
+                    return Ok("Successfully Created!!");
 
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Owner, Details:  {ex}" });
+            }
+
+        }
 
     }
 }

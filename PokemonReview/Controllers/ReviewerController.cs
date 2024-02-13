@@ -94,5 +94,50 @@ namespace PokemonReview.Controllers
 
         }
 
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateReviewer([FromBody] ReviewerDto createReviewer)
+        {
+            try
+            {
+                if (createReviewer == null || string.IsNullOrWhiteSpace(createReviewer.LastName))
+                {
+                    ModelState.AddModelError("", "Category Name cannot be empty!!");
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var checking_reviewer = _reviewerRepository.GetReviewers()
+                        .Where(cc => cc.LastName.Trim().ToUpper() == createReviewer.LastName.TrimEnd().ToUpper())
+                        .FirstOrDefault();
+                    if (checking_reviewer != null)
+                    {
+                        ModelState.AddModelError("", "Reviewer already exists.");
+                        return StatusCode(422, ModelState);
+                    }
+                    else if (!ModelState.IsValid)
+                    {
+                        return BadRequest(ModelState);
+                    }
+                    else
+                    {
+                        var reviewerMap = _mapper.Map<Reviewer>(createReviewer);
+                        if (!_reviewerRepository.CreateReviewer(reviewerMap))
+                        {
+                            ModelState.AddModelError("", "Something went wrong while saving!!");
+                            return StatusCode(500, ModelState);
+                        }
+                    }
+                    return Ok("Successfully Created!!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Reviewer, Details:  {ex}" });
+            }
+
+        }
     }
 }
