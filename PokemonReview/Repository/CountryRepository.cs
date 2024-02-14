@@ -27,6 +27,12 @@ namespace PokemonReview.Repository
             return Save();
         }
 
+        public bool DeleteCountry(Country country)
+        {
+            _dataContext.Remove(country);
+            return Save();
+        }
+
         public ICollection<Country> GetCountries()
         {
             return _dataContext.Countries.ToList();
@@ -51,6 +57,12 @@ namespace PokemonReview.Repository
         {
             var saved = _dataContext.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+        public bool UpdateCountry(Country country)
+        {
+            _dataContext.Update(country);
+            return Save();
         }
     }
 }

@@ -137,5 +137,48 @@ namespace PokemonReview.Controllers
             }           
             
         }
+
+        [HttpPut("{categoryId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDto updateCategory)
+        {
+            try
+            {
+                if (updateCategory == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if(categoryId != updateCategory.Id)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if(!_categoryrepository.CategoryExists(categoryId))
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var categoryMap = _mapper.Map<Category>(updateCategory);
+                    if (!_categoryrepository.UpdateCategory(categoryMap)){
+                        ModelState.AddModelError("","Something went wrong while updating Category");
+                        return StatusCode(500,ModelState);
+                    }
+                    
+                   return Ok("Category Updated Successfully!!");
+                   
+                }
+
+            }catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Category, Details: {ex}" });
+            }
+        }
+
     }
 }

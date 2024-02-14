@@ -155,5 +155,48 @@ namespace PokemonReview.Controllers
 
         }
 
+        [HttpPut("{ownerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateOwner(int ownerId, [FromBody] OwnerDto updateOwner)
+        {
+            try
+            {
+                if (updateOwner == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (ownerId != updateOwner.Id)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!_ownerRepository.OwnerExist(ownerId))
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var ownerMap = _mapper.Map<Owner>(updateOwner);
+                    if (!_ownerRepository.UpdateOwner(ownerMap))
+                    {
+                        ModelState.AddModelError("", "Something went wrong while updating Owner");
+                        return StatusCode(500, ModelState);
+                    }
+                    return Ok("Owner Updated Successfully!!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Owner, Details: {ex}" });
+            }
+        }
+
+
     }
 }

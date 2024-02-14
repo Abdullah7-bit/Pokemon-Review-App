@@ -139,5 +139,48 @@ namespace PokemonReview.Controllers
             }
 
         }
+
+        [HttpPut("{reviewerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReviewer(int reviewerId, [FromBody] ReviewerDto updateReviewer)
+        {
+            try
+            {
+                if (updateReviewer == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (reviewerId != updateReviewer.Id)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!_reviewerRepository.ReviewerExists(reviewerId))
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var reviewerMap = _mapper.Map<Reviewer>(updateReviewer);
+                    if (!_reviewerRepository.UpdateReviewer(reviewerMap))
+                    {
+                        ModelState.AddModelError("", "Something went wrong while updating Reviewer");
+                        return StatusCode(500, ModelState);
+                    }
+                    return Ok("Reviewer Updated Successfully!!");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Reviewer, Details: {ex}" });
+            }
+        }
+
     }
 }

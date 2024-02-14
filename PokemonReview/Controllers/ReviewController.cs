@@ -152,5 +152,48 @@ namespace PokemonReview.Controllers
 
         }
 
+
+        [HttpPut("{reviewId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCountry(int reviewId, [FromBody] ReviewDto updateReview)
+        {
+            try
+            {
+                if (updateReview == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (reviewId != updateReview.Id)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!_reviewRepository.ReviewExist(reviewId))
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var reviewMap = _mapper.Map<Review>(updateReview);
+                    if (!_reviewRepository.UpdateReview(reviewMap))
+                    {
+                        ModelState.AddModelError("", "Something went wrong while updating Review");
+                        return StatusCode(500, ModelState);
+                    }
+                    return Ok("Review Updated Successfully!!");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Review, Details: {ex}" });
+            }
+        }
     }
 }

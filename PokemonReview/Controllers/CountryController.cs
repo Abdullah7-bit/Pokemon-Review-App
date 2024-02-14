@@ -70,7 +70,6 @@ namespace PokemonReview.Controllers
         [HttpGet("/owners/{ownerId}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(200, Type = typeof(Country))]
-
         public IActionResult GetCountryByOwnerId(int ownerId)
         {
             try
@@ -141,6 +140,50 @@ namespace PokemonReview.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error While executing Create/POST API for Country, Details:  {ex}" });
             }
 
+        }
+
+
+        [HttpPut("{countryId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCountry(int countryId, [FromBody] CountryDto updateCountry)
+        {
+            try
+            {
+                if (updateCountry == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (countryId != updateCountry.Id)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!_countryRepository.CountryExist(countryId))
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else
+                {
+                    var countryMap = _mapper.Map<Country>(updateCountry);
+                    if (!_countryRepository.UpdateCountry(countryMap))
+                    {
+                        ModelState.AddModelError("", "Something went wrong while updating Country");
+                        return StatusCode(500, ModelState);
+                    }
+                    return Ok("Country Updated Successfully!!");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Country, Details: {ex}" });
+            }
         }
 
     }
