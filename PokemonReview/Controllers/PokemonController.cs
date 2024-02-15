@@ -14,10 +14,11 @@ namespace PokemonReview.Controllers
     {
         private readonly IPokemonRepository _pokemonrepository;
         //private readonly IOwnerRepository _ownerRepository;
-        //private readonly IPokemonRepository _pokemonrepository;
+        private readonly IReviewRepository _reviewRepository;
         private readonly IMapper _mapper;
-        public PokemonController(IPokemonRepository pokemonrepository, IMapper mapper)
+        public PokemonController(IPokemonRepository pokemonrepository, IReviewRepository reviewRepository, IMapper mapper)
         {
+            _reviewRepository = reviewRepository;
             _pokemonrepository = pokemonrepository;
             _mapper = mapper;
         }
@@ -141,7 +142,7 @@ namespace PokemonReview.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCountry([FromQuery] int ownerId, int pokeId, [FromQuery] int categoryId, [FromBody] PokemonDto updatePokemon)
+        public IActionResult UpdatePokemon([FromQuery] int ownerId, int pokeId, [FromQuery] int categoryId, [FromBody] PokemonDto updatePokemon)
         {
             try
             {
@@ -180,5 +181,41 @@ namespace PokemonReview.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Pokemon, Details: {ex}" });
             }
         }
+
+        [HttpDelete("{pokeId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeletePokemon(int pokeId)
+        {
+            if (!_pokemonrepository.PokemonExists(pokeId))
+            {
+                return NotFound($"Pokemon {pokeId} not found!!!");
+            }
+            else
+            {
+                var reviewsToDelete = _reviewRepository.GetReviewsOfAPokemon(pokeId);
+
+                var pokemonToDelete = _pokemonrepository.GetPokemon(pokeId);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!_reviewRepository.DeleteReviews(reviewsToDelete.ToList())) // Delete Range is aplied here.
+                {
+                    ModelState.AddModelError("", "Something went wrong while Deleting Reviews.");
+                    return StatusCode(500, ModelState);
+                }
+                else if (!_pokemonrepository.DeletePokemon(pokemonToDelete))
+                {
+                    ModelState.AddModelError("", "Something went wrong while Deleting Pokemon.");
+                    return StatusCode(500, ModelState);
+                }
+                return Ok("Pokemon deleted successfully!!!");
+            }
+        }
+
+
     }
 }

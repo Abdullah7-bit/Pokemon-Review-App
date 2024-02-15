@@ -195,5 +195,33 @@ namespace PokemonReview.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = $"Error while executing the update/PUT API for the Review, Details: {ex}" });
             }
         }
+
+        [HttpDelete("{reviewId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteReview(int reviewId)
+        {
+            if (!_reviewRepository.ReviewExist(reviewId))
+            {
+                return NotFound($"Review {reviewId} not found!!!");
+            }
+            else
+            {
+                var reviewToDelete = _reviewRepository.GetReview(reviewId);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                else if (!_reviewRepository.DeleteReview(reviewToDelete))
+                {
+                    ModelState.AddModelError("", "Something went wrong while Deleting Review.");
+                    return StatusCode(500, ModelState);
+                }
+                return Ok("Review deleted successfully!!!");
+            }
+        }
+
     }
 }

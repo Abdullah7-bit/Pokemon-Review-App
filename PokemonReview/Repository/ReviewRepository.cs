@@ -29,6 +29,12 @@ namespace PokemonReview.Repository
             return Save();
         }
 
+        public bool DeleteReviews(List<Review> reviews)
+        {
+            _dataContext.RemoveRange(reviews);
+            return Save();
+        }
+
         public Review GetReview(int reviewId)
         {
             return _dataContext.Reviews.Where(r => r.Id == reviewId).FirstOrDefault();
